@@ -1,12 +1,15 @@
-function myFunction() {
+function touroku() {
   
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const touroku_sheet = ss.getSheetByName('登録');
   const listsheet = ss.getSheetByName('リスト');
 
+  
+  
     //データが入っている次の列にデータを入れる
     var lastrow = listsheet.getRange(1,1).getNextDataCell(SpreadsheetApp.Direction.DOWN).getRow()+1;
     console.log(lastrow); 
+
 
     //データがA２に入っていなかったら、A2にいれる
     if(listsheet.getRange('A2').isBlank()){ 
@@ -27,7 +30,6 @@ function myFunction() {
     if(touroku_sheet.getRange('B3').isBlank() || !isFinite(number)){  
       Browser.msgBox("入力が内容があっていません。");
       return;
-
     }
 
  // 既存のIDと新しいIDが一致する場合、登録を拒否
