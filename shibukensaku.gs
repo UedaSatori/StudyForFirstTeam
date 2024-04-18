@@ -1,5 +1,4 @@
-function myFunction() {
-  function sarch() {
+function sarch() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   const kensakusheet = ss.getSheetByName('検索');
   const listsheet = ss.getSheetByName('リスト');
@@ -28,7 +27,6 @@ function myFunction() {
     }else{
       const valueArray = nameArray[i][0].indexOf(sarchword);
       Logger.log(valueArray);
-      
       if(valueArray != -1){
         matchArray.push(nameArray[i]);
         }else if(valueArray == 0){
@@ -61,6 +59,5 @@ function myFunction() {
   //Logger.log(SearchChar);
  
   //kensakusheet.getRange('C6').setValue('=QUERY(リスト!A:E,"SELECT A,B,C,D,E WHERE A,B,C,D,E SearchChar")');
-  
 
-}
+
