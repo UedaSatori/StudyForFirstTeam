@@ -7,12 +7,12 @@ function myFunction() {
   
   
     //データが入っている次の列にデータを入れる
-    const lastrow = listsheet.getRange(1,1).getNextDataCell(SpreadsheetApp.Direction.DOWN).getRow()+1;
+    var lastrow = listsheet.getRange(1,1).getNextDataCell(SpreadsheetApp.Direction.DOWN).getRow()+1;
     console.log(lastrow); 
 
     //データがA２に入っていなかったら、A2にいれる
     if(listsheet.getRange('A2').isBlank()){ 
-      lastrow == 2;
+      lastrow = 2;
       console.log(lastrow);
     }
 
@@ -32,21 +32,22 @@ function myFunction() {
 
     }
 
-    //番号がリストにあったらエラーを返す
+ // 既存のIDと新しいIDが一致する場合、登録を拒否
+  var data = listsheet.getRange("A:A").getValues(); // A列の値を取得
+  console.log(data);
 
-    var colLength = listsheet.getRange(1, 1).getNextDataCell(SpreadsheetApp.Direction.DOWN).getColumn();
-    var columnData = listsheet.getRange(2, 1, listsheet.getMaxRows(), colLength).getValues();
-    Logger.log(columnData);
-
-    
-
-    if(columnData == number){
-      Browser.msgBox('この番号はすでに登録されています。');
-      return
+  for (var i = 0; i < data.length; i++) {
+    if (data[i][0] === number) {
+      
+      Browser.msgBox("この社員番号は登録されています");
+      return ;
     }
+  }
+  
+  
 
 
-    
+ 
 
 
     //「リスト」シートの空白セルに転記
