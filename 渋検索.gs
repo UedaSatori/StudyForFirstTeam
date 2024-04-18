@@ -7,7 +7,6 @@ function sarch() {
   const sarchword = kensakusheet.getRange('C2').getValue();
   Logger.log(sarchword);
 
-
   //B,シートの定義
   const START_COL_NUM = 1; //getRangeメソッドで読み込み始める列番号
   const START_ROW_NUM = 1; //getRangeメソッドで読み込み始める行番号
