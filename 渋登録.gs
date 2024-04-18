@@ -4,9 +4,6 @@ function myFunction() {
   const touroku_sheet = ss.getSheetByName('登録');
   const listsheet = ss.getSheetByName('リスト');
 
-  
-  
-  
     //データが入っている次の列にデータを入れる
     var lastrow = listsheet.getRange(1,1).getNextDataCell(SpreadsheetApp.Direction.DOWN).getRow()+1;
     console.log(lastrow); 
