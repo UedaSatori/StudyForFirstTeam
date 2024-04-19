@@ -1,15 +1,15 @@
 // @ts-nocheck
 //検索＿担当：中島
-//const ss = SpreadsheetApp.getActiveSpreadsheet();
-//const sheet2 = ss.getSheetByName("リスト");
-//const sheet3 = ss.getSheetByName("参照");
+const ss = SpreadsheetApp.getActiveSpreadsheet();
+const sheet2 = ss.getSheetByName("リスト");
+const sheet3 = ss.getSheetByName("参照");
 
 //自分のスプシで運用するためのコード
 //const sheet2 = ss.getSheetByName("DBシート");
 //const sheet3 = ss.getSheetByName("表示シート");
 
 function enterWords(){ //検索条件入力に関するfunction
-  
+
   //入力ボックスを配置
   var ui = SpreadsheetApp.getUi();
   var btn1 = ui.ButtonSet.OK_CANCEL;
@@ -40,7 +40,7 @@ function enterWords(){ //検索条件入力に関するfunction
 
   //console.log(returnOfinputOnPrompt);
 
-  let workSpaceFordisplayRecord = searchValues(returnOfinputOnPrompt);
+  let workSpaceFordisplayRecord = searchValues(returnOfinputOnPrompt,sheet2);
 
   console.log(workSpaceFordisplayRecord);
 
@@ -113,7 +113,16 @@ function inputOnPrompt(text1){
   }
 
   //入力値の最終チェックを行う。
-  Browser.msgBox(inputValues+"検索値は以上でよろしいでしょうか？",btn1);
+  let btnCheckFor_searchValue = Browser.msgBox(inputValues+"検索値は以上でよろしいでしょうか？",btn1);
+
+  switch(btnCheckFor_searchValue){
+    case "ok":
+      Browser.msgBox("検索いたします。")
+      break;
+    case "cancel":
+      Browser.msgBox("検索を中断します。")
+      return;
+  }
 
   return inputList;
 }
@@ -169,63 +178,53 @@ function displayRecord(outputList){
   }
 }
 
-//検索メソッド。引数を取る。引数は検索文字列を格納した配列inputList,戻り値が検索レコード群を格納した配列outputList
+//検索メソッド。引数を取る。引数は検索文字列を格納した配列inputListと検索対象シートsheet、戻り値が検索レコード群を格納した配列outputList
 //返すレコードがない場合outputListの先頭要素にnullを入れて返す。
-function searchValues(inputList){
+function searchValues(inputList,sheet){
 
   console.log(inputList);
 
   //結果用配列を準備
   var workSpaceOnsearchValues = new Array();
   var outputList = new Array(workSpaceOnsearchValues);
-
-  //sheet2の最初のレコードのPKの値を取得。これの有無でシート内にレコードがあるかを判定する。
-  var sheet2FirstRecordPK = sheet2.getRange(2,1);
-
+  
   //戻り値が存在しない(undefined)の場合は、この関数もundefinedを返して、処理を終了する。
   if(inputList === undefined){
     return;
   }
 
-  //シート内にレコードがない場合、処理を終了する。
-  if(sheet2FirstRecordPK.isBlank() == true){
+  //検索対象シートにおける検索範囲を戻り値として取得。
+  let searchAreaOnsearchValue = decidingSearchArea(sheet);
 
-    Browser.msgBox("シート内にレコードがないようです。");
-
-    //返すレコードがないのでoutputListの先頭要素にnullを入れて返す。
-    return outputList[0] = null;
+  //検索エリアが存在しない場合、undefinedを返す。
+  if(searchAreaOnsearchValue == null){
+    return;
   }
 
-  //データが存在している範囲の最終行の行番号を取得。
-  //-2することでレコードの行数を獲得
-  var sheet2LastRow = sheet2.getRange(1,1).getNextDataCell(SpreadsheetApp.Direction.DOWN).getRow()-1;
+  //検索エリアをログで出す。
+  console.log(searchAreaOnsearchValue);
 
-  //データが存在している範囲の最終列の列番号を取得
-  var sheet2LastColumn = sheet2FirstRecordPK.getNextDataCell(SpreadsheetApp.Direction.NEXT).getColumn();
-
-  //参照シート内の検索エリア内のレコードを代入する。（2次元配列）
-  var sheet2SearchArea = sheet2.getRange(2,1,sheet2LastRow,sheet2LastColumn).getValues();
 
   let indexForOutputList = 0;
 
   //引数がnullならば全件選択なので全件のレコードをoutputListに格納する。
   if(inputList === null){
 
-    console.log(sheet2SearchArea);
+    console.log(searchAreaOnsearchValue.sheetSearchArea);
 
-   for(i = 0; i < sheet2LastRow; i++){
-    outputList[i] = sheet2SearchArea[i];
+   for(i = 0; i < searchAreaOnsearchValue.sheetLastRow; i++){
+    outputList[i] = searchAreaOnsearchValue.sheetSearchArea[i];
    } 
   }else{
     //拡張for文で検索文字列配列の要素を取り出し、それに該当するレコードがあるかを調べてくる。
     //検索文字列が「田中、野村」だった場合に田中さんと野村さんが同時に出る。
     for(let input of inputList){
-      for(i = 0; i < sheet2LastRow; i++){
-        for(j = 0; j < sheet2LastColumn; j++){
-          if(sheet2SearchArea[i][j] == input){
+      for(i = 0; i < searchAreaOnsearchValue.sheetLastRow; i++){
+        for(j = 0; j < searchAreaOnsearchValue.sheetLastColumn; j++){
+          if(searchAreaOnsearchValue.sheetSearchArea[i][j] == input){
 
             //検索エリアに該当したレコードを格納する。
-            outputList[indexForOutputList] = sheet2SearchArea[i];
+            outputList[indexForOutputList] = searchAreaOnsearchValue.sheetSearchArea[i];
 
             indexForOutputList++;
           }
@@ -251,4 +250,65 @@ function searchValues(inputList){
 
   //戻り値としてoutputListを返す。
   return outputList;
+}
+
+//シート内の検索エリアを確定する関数
+function decidingSearchArea(sheet){
+  let sheetName = sheet.getName();
+
+  if(sheetName == "リスト"){
+    //sheet2の最初のレコードのPKの値を取得。これの有無でシート内にレコードがあるかを判定する。
+    var sheet2FirstRecordPK = sheet.getRange(2,1);
+
+    
+
+    //シート内にレコードがない場合、処理を終了する。
+    if(sheet2FirstRecordPK.isBlank() == true){
+
+      Browser.msgBox("シート内にレコードがないようです。");
+
+      //返すレコードがないのでnullを入れて返す。
+      return null;
+    }
+
+    //データが存在している範囲の最終行の行番号を取得。
+    //-2することでレコードの行数を獲得
+    var sheetLastRow = sheet.getRange(1,1).getNextDataCell(SpreadsheetApp.Direction.DOWN).getRow()-1;
+
+    //データが存在している範囲の最終列の列番号を取得
+    var sheetLastColumn = sheet2FirstRecordPK.getNextDataCell(SpreadsheetApp.Direction.NEXT).getColumn();
+
+    //参照シート内の検索エリア内のレコードを代入する。（2次元配列）
+    var sheetSearchArea = sheet.getRange(2,1,sheetLastRow,sheetLastColumn).getValues();
+
+    //戻り値は該当シートの検索範囲とその行番号と列番号
+    return {sheetSearchArea,sheetLastRow,sheetLastColumn};
+
+  }else if(sheetName = "参照"){
+
+    //sheet3の最初のレコードのPKの値を取得。これの有無でシート内にレコードがあるかを判定する。
+    var sheet3FirstRecordPK = sheet.getRange(3,2);
+
+    //シート内にレコードがない場合、処理を終了する。
+    if(sheet3FirstRecordPK.isBlank() == true){
+
+      Browser.msgBox("シート内にレコードがないようです。");
+
+      //返すレコードがないのでnullを入れて返す。
+      return null;
+    }
+
+    //データが存在している範囲の最終行の行番号を取得。
+    //-2することでレコードの行数を獲得
+    var sheetLastRow = sheet.getRange("A2").getNextDataCell(SpreadsheetApp.Direction.DOWN).getRow()-1;
+
+    //データが存在している範囲の最終列の列番号を取得
+    var sheetLastColumn = sheet3FirstRecordPK.getNextDataCell(SpreadsheetApp.Direction.NEXT).getColumn();
+
+    //参照シート内の検索エリア内のレコードを代入する。（2次元配列）
+    var sheetSearchArea = sheet.getRange(2,1,sheetLastRow,sheetLastColumn).getValues();
+
+    //戻り値は該当シートの検索範囲と最終行番号と最終列番号
+    return {sheetSearchArea,sheetLastRow,sheetLastColumn};
+  }
 }
