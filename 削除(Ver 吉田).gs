@@ -1,21 +1,32 @@
-function delete_duplication(){
+function delckline2() {
+  
+  //チェックボックスの位置を指定
+  const CKPOS = 1
 
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet3 = ss.getSheetByName('参照');
-  const startRow = 3;
-  const lastRow = sheet3.getLastRow();
+  const sh = SpreadsheetApp.getActiveSpreadsheet();
+  const ss = sh.getSheetByName('参照');
+  const values = ss.getDataRange().getValues();
+  
+  //チェックの入っている行を逆順で取得
+  const rowNum = values.flatMap((row,i) => row[CKPOS-1]==true? i+1:[]).reverse();//行の順番を戻す
+    Logger.log(rowNum);
+ 
+  //チェックの入っている行がない場合
+  if (rowNum == 0){
 
-  const bools = sheet3.getRange(startRow,1,lastRow).getValues().flatMap(bool => bool);
+    Browser.msgBox("削除する項目にチェックを入れてください");
+    return;
+  }
 
-  let deleteCount = 0;
-  bools.forEach((bool, idx)=>{
+  //削除確認メッセージで「キャンセル」が押下された場合
+  if (Browser.msgBox("チェックされた項目を削除します",Browser.Buttons.OK_CANCEL) === 'cancel'){
 
-    //チェックの入っている項目がある場合（ない場合は処理終了）
-    if (bool) {
-      //チェックの入っている項目を削除
-      sheet3.deleteRow(startRow + idx - deleteCount);
+    Browser.msgBox("キャンセルしました");
+    return;
+  }
 
-      deleteCount++;
-    }
-  });
+
+  //行を削除
+  rowNum.forEach(row => ss.deleteRow(row));
+    Browser.msgBox("削除が完了しました");
 }
