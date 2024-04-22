@@ -1,5 +1,5 @@
 // @ts-nocheck
-//検索＿担当：中島
+//検索
 const ss = SpreadsheetApp.getActiveSpreadsheet();
 const sheet2 = ss.getSheetByName("リスト");
 const sheet3 = ss.getSheetByName("参照");
