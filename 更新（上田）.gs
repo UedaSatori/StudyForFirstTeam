@@ -31,7 +31,7 @@ function updateRecord() {
 
   console.log(updatedRecords);
 
-  //リストシート内のレコード群にと更新用レコードのPKの値を比較して、リストシートのPKが同じレコードに更新用レコードを入れる。
+  //リストシート内のレコード群と更新用レコードのPKの値を比較して、リストシートのPKが同じレコードに更新用レコードを入れる。
   for(i = 0; i < updatedRecords.length; i++){
     for(j = 0; j < sheet2SearchAreaOn_updateRecord.sheetSearchArea.length; j++){
 
