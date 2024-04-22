@@ -15,7 +15,7 @@ function enterWords(){ //検索条件入力に関するfunction
   var btn1 = ui.ButtonSet.OK_CANCEL;
 
   //最初のプロンプトを表示
-  var response = ui.prompt("検索条件の個数を入力してください。※全件選択をしたい場合は１から５の整数を押して次へ進んでください。",btn1);
+  var response = ui.prompt("検索条件の個数を入力してください。※全件選択をしたい場合は１から５のいずれかを入力し、次へ進んでください。",btn1);
   
   //一つ目の個数入力を数値で受け取る。
   const text1 = Number(response.getResponseText());
