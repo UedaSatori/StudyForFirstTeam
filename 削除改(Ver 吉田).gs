@@ -1,44 +1,55 @@
 function delckline2() {
-  
-  //チェックボックスの位置を指定
+
   const CKPOS = 1
-
   const sh = SpreadsheetApp.getActiveSpreadsheet();
-  const ss1 = sh.getSheetByName('リスト');
-  const ss2 = sh.getSheetByName('参照');
+  const ss1 = sh.getSheetByName('シート2');
+  const ss2 = sh.getSheetByName('シート3');
 
-  const values = ss2.getDataRange().getValues();
-
+  const values1 = ss1.getDataRange().getValues();
+  console.log(values1);
+  const values2 = ss2.getDataRange().getValues();
   
-  //「参照」でチェックの入っている行を逆順で取得
-  const rowNum1 = values.flatMap((row,i) => row[CKPOS-1]==true? i+1:[]).reverse();//行の順番を戻す
-    Logger.log(rowNum1);
-  
-  //「リスト」からも同じ行を逆順で取得
-  const rowNum2 = values.flatMap((row,i) => row[CKPOS-1]==true? i:[]).reverse();//行の順番を返す
-    Logger.log(rowNum2);
+  const rowNum1 = values2.flatMap((row,i) => row[CKPOS-1]==true? i+1:[]).reverse();
+  Logger.log(rowNum1);
 
- 
-  //チェックの入っている行がない場合
+
   if (rowNum1 == 0){
 
     Browser.msgBox("削除する項目にチェックを入れてください");
     return;
   }
+  
+  let checkvalue = new Array();
+    Logger.log(checkvalue);
+  let checkvalueIndex = 0;
+  
+  for( let i = 0; i < values2.length; i++){
+      if( values2[i][0]=== true ){
+        checkvalue[checkvalueIndex] = values2[i][1];
+        Logger.log(checkvalue);
+        checkvalueIndex++;
+      }
+  }
 
-  //削除確認メッセージで「キャンセル」が押下された場合
+
   if (Browser.msgBox("チェックされた項目を削除します",Browser.Buttons.OK_CANCEL) === 'cancel'){
-
+    
     Browser.msgBox("キャンセルしました");
     return;
   }
+  
 
-  //「参照」の行を削除
+  var lastRow = ss1.getLastRow();
+  for (var i = lastRow; i >= 1; i--){
+
+    for(j = 0; j < checkvalue.length; j++){
+        if (values1[i-1][0].toString().includes(checkvalue[j].toString())){
+        ss1.deleteRow(i);
+      }
+    } 
+  }
+
   rowNum1.forEach(row => ss2.deleteRow(row));
 
-  //「リスト」の行を削除
-  rowNum2.forEach(row => ss1.deleteRow(row));
-
-    Browser.msgBox("削除が完了しました");
-
+  Browser.msgBox("削除が完了しました");
 }
