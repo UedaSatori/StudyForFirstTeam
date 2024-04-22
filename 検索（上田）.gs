@@ -1,5 +1,5 @@
 // @ts-nocheck
-//検索
+//検索＿担当：中島
 const ss = SpreadsheetApp.getActiveSpreadsheet();
 const sheet2 = ss.getSheetByName("リスト");
 const sheet3 = ss.getSheetByName("参照");
@@ -15,8 +15,11 @@ function enterWords(){ //検索条件入力に関するfunction
   var btn1 = ui.ButtonSet.OK_CANCEL;
 
   //最初のプロンプトを表示
-  var response = ui.prompt("検索条件の個数を入力してください。※全件選択をしたい場合は１から５のいずれかを入力し、次へ進んでください。",btn1);
-  
+  var response = ui.prompt("検索条件の個数を入力してください。※全件選択をしたい場合は１から５の整数を押して次へ進んでください。",btn1);
+
+  //キャンセルボタンが押された時、処理を終了する。  
+  if (response.getSelectedButton() == ui.Button.CANCEL) return;
+
   //一つ目の個数入力を数値で受け取る。
   const text1 = Number(response.getResponseText());
 
@@ -303,13 +306,13 @@ function decidingSearchArea(sheet){
 
     //データが存在している範囲の最終行の行番号を取得。
     //-2することでレコードの行数を獲得
-    var sheetLastRow = sheet.getRange("A2").getNextDataCell(SpreadsheetApp.Direction.DOWN).getRow()-1;
+    var sheetLastRow = sheet.getRange("A2").getNextDataCell(SpreadsheetApp.Direction.DOWN).getRow()-2;
 
     //データが存在している範囲の最終列の列番号を取得
     var sheetLastColumn = sheet3FirstRecordPK.getNextDataCell(SpreadsheetApp.Direction.NEXT).getColumn();
 
     //参照シート内の検索エリア内のレコードを代入する。（2次元配列）これはチェックボックスも含めたシートのデータをすべて持ってくるので先頭要素にはbooleanの値が入る。
-    var sheetSearchArea = sheet.getRange(2,1,sheetLastRow,sheetLastColumn).getValues();
+    var sheetSearchArea = sheet.getRange(3,1,sheetLastRow,sheetLastColumn).getValues();
 
     //戻り値は該当シートの検索範囲と最終行番号と最終列番号
     return {sheetSearchArea,sheetLastRow,sheetLastColumn};

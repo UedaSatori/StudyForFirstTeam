@@ -43,6 +43,7 @@ function touroku() {
 
   console.log(resultOntouroku);
 
+  /*
   //入力データを格納した配列が空白文字を格納しているかを調べる。空白があった場合、エラー文を表示する。
   for(i = 0; i < resultOntouroku[0].length; i++){
     if(resultOntouroku[0][i] == ""){
@@ -51,13 +52,29 @@ function touroku() {
       return
     }
   }
-  
+  */
+
+  //登録情報を格納した2次元配列を渡して、入力規則に登録情報が則っているかを調べる。
+  let judge = judgeRecord(resultOntouroku);
+
+  //判定値に応じて処理の継続か中断かを選ぶ
+  switch(judge){
+    case "OK":
+      break;
+    case "OUT":
+      deleteInput_touroku();
+      return;
+  }
+  //上の情報判定文は更新メソッドでも使う。
+
+  /*
   //numberが数字ではなかった場合エラー文を表示する
   if(!isFinite(number)){  
     Browser.msgBox("数値を入力してください。");
     deleteInput_touroku();
     return;
   }
+  */
 
   //リストレコードのレコードの存在を戻り値として受け取る。
   let searchAreaOn_touroku = decidingSearchArea(sheet2);
@@ -78,7 +95,7 @@ function touroku() {
 
       let btnCheckFor_touroku1 = Browser.msgBox("社員番号" + searchRecord[0] + "," + searchRecord[1] + "," + searchRecord[2] + "さんは" 
       + searchRecord[3] + "," + searchRecord[4] 
-      + "で既に登録されています。同一人物である場合は、登録済みのレコードを削除してから再登録してください。このまま続ける場合はCANCELを押してください"
+      + "で既に登録されています。あなたが同一人物である場合は社員番号が違いますので、前のレコードを削除してから登録をお願いします。このまま続ける場合はCANCELを押してください"
       ,btnFor_touroku);
 
       console.log(btnCheckFor_touroku1);
@@ -108,12 +125,12 @@ function touroku() {
 
   //最終確認を行う。  
   btnCheckFor_touroku1 = Browser.msgBox("社員番号: " + resultOntouroku[0][0] + "," + "姓: " + resultOntouroku[0][1] + "," + "名: " + resultOntouroku[0][2] + "," 
-  + "職種: " + resultOntouroku[0][3] + "," + "拠点: " + resultOntouroku[0][4] + "で登録します。よろしいですか？", btnFor_touroku);
+  + "職種: " + resultOntouroku[0][3] + "," + "拠点: " + resultOntouroku[0][4] + "で登録いたします。よろしいですか？", btnFor_touroku);
 
   //最終確認判定
   switch(btnCheckFor_touroku1){
     case "ok":
-      Browser.msgBox("登録しました。");
+      Browser.msgBox("登録いたします。");
       break;
 
     case "cancel":
