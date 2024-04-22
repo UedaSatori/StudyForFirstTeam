@@ -78,7 +78,7 @@ function touroku() {
 
       let btnCheckFor_touroku1 = Browser.msgBox("社員番号" + searchRecord[0] + "," + searchRecord[1] + "," + searchRecord[2] + "さんは" 
       + searchRecord[3] + "," + searchRecord[4] 
-      + "で既に登録されています。あなたが同一人物である場合は社員番号が違いますので、前のレコードを削除してから登録をお願いします。このまま続ける場合はCANCELを押してください"
+      + "で既に登録されています。同一人物である場合は、登録済みのレコードを削除してから再登録してください。このまま続ける場合はCANCELを押してください"
       ,btnFor_touroku);
 
       console.log(btnCheckFor_touroku1);
@@ -108,12 +108,12 @@ function touroku() {
 
   //最終確認を行う。  
   btnCheckFor_touroku1 = Browser.msgBox("社員番号: " + resultOntouroku[0][0] + "," + "姓: " + resultOntouroku[0][1] + "," + "名: " + resultOntouroku[0][2] + "," 
-  + "職種: " + resultOntouroku[0][3] + "," + "拠点: " + resultOntouroku[0][4] + "で登録いたします。よろしいですか？", btnFor_touroku);
+  + "職種: " + resultOntouroku[0][3] + "," + "拠点: " + resultOntouroku[0][4] + "で登録します。よろしいですか？", btnFor_touroku);
 
   //最終確認判定
   switch(btnCheckFor_touroku1){
     case "ok":
-      Browser.msgBox("登録いたします。");
+      Browser.msgBox("登録しました。");
       break;
 
     case "cancel":
