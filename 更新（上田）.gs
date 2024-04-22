@@ -6,7 +6,7 @@
 function updateRecord() {
 
   //本当は社員番号が変更をかけられたときを検知して、このメッセージを出したかったが期間が足りないため省略
-  Browser.msgBox("社員番号の値は更新できませんのでご了承ください。")
+  Browser.msgBox("社員番号の値は更新できません。")
 
   //参照シートに現在表示されているレコードをチェックボックス含めすべて持ってきて格納する。先頭要素がチェックボックスの真偽値なのでカラムは1列増える。
   let sheet3AreaOn_updateRecord = decidingSearchArea(sheet3);
