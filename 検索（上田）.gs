@@ -44,6 +44,9 @@ function enterWords(){ //検索条件入力に関するfunction
 
   console.log(workSpaceFordisplayRecord);
 
+  /*let workSpaceFordisplayRecord2 = searchValues(returnOfinputOnPrompt, sheet3);
+  console.log(workSpaceFordisplayRecord2);*/
+
   displayRecord(workSpaceFordisplayRecord);
 
   return;
@@ -305,7 +308,7 @@ function decidingSearchArea(sheet){
     //データが存在している範囲の最終列の列番号を取得
     var sheetLastColumn = sheet3FirstRecordPK.getNextDataCell(SpreadsheetApp.Direction.NEXT).getColumn();
 
-    //参照シート内の検索エリア内のレコードを代入する。（2次元配列）
+    //参照シート内の検索エリア内のレコードを代入する。（2次元配列）これはチェックボックスも含めたシートのデータをすべて持ってくるので先頭要素にはbooleanの値が入る。
     var sheetSearchArea = sheet.getRange(2,1,sheetLastRow,sheetLastColumn).getValues();
 
     //戻り値は該当シートの検索範囲と最終行番号と最終列番号
