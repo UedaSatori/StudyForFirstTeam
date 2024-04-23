@@ -17,7 +17,7 @@ function delckline2() {
   //'参照'でチェックボックスにチェックの入っている行番号がない場合、処理を終了する
   if (rowNum1 == 0){
 
-    Browser.msgBox("削除する項目にチェックを入れてください");
+    Browser.msgBox("削除できる項目がありません");
     return;
   }
   
