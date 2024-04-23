@@ -140,7 +140,7 @@ function inputOnPrompt(text1){
   }
 
   //入力値の最終チェックを行う。
-  let btnCheckFor_searchValue = Browser.msgBox(inputValues+"検索値は以上でよろしいでしょうか？、社員番号が検索文字列として入力されている場合は社員番号以外の検索文字列は無視されます。",btn1);
+  let btnCheckFor_searchValue = Browser.msgBox(inputValues+"検索値は以上でよろしいでしょうか？、数値が検索文字列として入力されている場合は数値は社員番号と見なされるので数値以外の検索文字列は無視されます。",btn1);
 
   switch(btnCheckFor_searchValue){
     case "ok":
