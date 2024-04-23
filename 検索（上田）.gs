@@ -18,7 +18,10 @@ function enterWords(){ //検索条件入力に関するfunction
   var response = ui.prompt("検索条件の個数を入力してください。※全件選択をしたい場合は１から５の整数を押して次へ進んでください。",btn1);
 
   //キャンセルボタンが押された時、処理を終了する。  
-  if (response.getSelectedButton() == ui.Button.CANCEL) return;
+  if (response.getSelectedButton() == ui.Button.CANCEL){
+    Browser.msgBox("処理を終了します。");
+    return;
+  }
 
   //一つ目の個数入力を数値で受け取る。
   const text1 = Number(response.getResponseText());
@@ -43,14 +46,14 @@ function enterWords(){ //検索条件入力に関するfunction
 
   //console.log(returnOfinputOnPrompt);
 
-  let workSpaceFordisplayRecord = searchValues(returnOfinputOnPrompt,sheet2);
+  let resultFordisplayRecord = searchValues(returnOfinputOnPrompt,sheet2);
 
-  console.log(workSpaceFordisplayRecord);
+  console.log(resultFordisplayRecord);
 
   /*let workSpaceFordisplayRecord2 = searchValues(returnOfinputOnPrompt, sheet3);
   console.log(workSpaceFordisplayRecord2);*/
 
-  displayRecord(workSpaceFordisplayRecord);
+  displayRecord(resultFordisplayRecord);
 
   return;
 }
@@ -80,6 +83,8 @@ function inputOnPrompt(text1){
     case ui.Button.OK:
       break;
     case ui.Button.CANCEL:
+      //87加筆
+      Browser.msgBox("処理を終了します。");
       return;
   }
   
@@ -102,16 +107,32 @@ function inputOnPrompt(text1){
   inputList[0] = response1.getResponseText()
 
   //入力値を入力させるフェーズ。
-  for(i = 0; i < text1-1; i++){
+  for(i = 1; i < text1; i++){
 
     //今回のプロンプトを表示する。
     response1 = ui.prompt("次の検索条件を入力してください。",btn1);
 
+    //114から126まで加筆修正。
+    //2つ目以降の検索文字列で空白が入力された場合、エラーメッセージを出力し、処理を中断する。
+    if(response1.getResponseText() == ""){
+      Browser.msgBox("2つ目以降の検索文字列で空白入力することは許可されていません。検索条件の個数選択からやり直してください。");
+      return;
+    }
+
+    //今回のプロンプトのボタン押下に応じて処理を変える。キャンセルボタンが押されたら、処理を中断する。
+    switch(response1){
+      case "ok":
+        break;
+      case "cancel":
+        Browser.msgBox("検索条件の個数選択からやり直してください。");
+        return;
+    }
+
     //今回のプロンプトに入力された値を文字列として可変長配列に格納する。
-    inputList[i+1] = response1.getResponseText();
+    inputList[i] = response1.getResponseText();
   }
 
-  //表示用配列に入力値の一覧を入力する。
+  //表示用変数に入力値の一覧を入力する。
   for(i = 0; i < text1; i++){
     
     inputValues += inputList[i];
@@ -119,7 +140,7 @@ function inputOnPrompt(text1){
   }
 
   //入力値の最終チェックを行う。
-  let btnCheckFor_searchValue = Browser.msgBox(inputValues+"検索値は以上でよろしいでしょうか？",btn1);
+  let btnCheckFor_searchValue = Browser.msgBox(inputValues+"検索値は以上でよろしいでしょうか？、社員番号が検索文字列として入力されている場合は社員番号以外の検索文字列は無視されます。",btn1);
 
   switch(btnCheckFor_searchValue){
     case "ok":
@@ -130,12 +151,34 @@ function inputOnPrompt(text1){
       return;
   }
 
+  //155~169加筆
+  let outputPKs = new Array()
+  let outputPKsIndex = 0;
+
+  //社員番号が検索文字列に入力された際は、社員番号で求めたいレコードを固定している形にするので、社員番号だけを出力するようにする。
+  for(i = 0; i < inputList.length; i++){
+    if(isFinite(inputList[i])){
+      outputPKs[outputPKsIndex] = inputList[i];
+      outputPKsIndex++;
+    }
+  }
+
+  //社員番号格納配列が存在するならば社員番号格納配列の方を返し、処理を終える。
+  if(isFinite(outputPKs[0])){
+    return outputPKs;
+  }
+
   return inputList;
 }
 
 //検索用メソッドなどから表示用配列（2次元）を受け取ってそれを参照シートに表示するメソッド
 function displayRecord(outputList){
   
+  //検索が何らかのエラーで中断された場合、処理を終了する。
+  if(outputList === undefined){
+    return;
+  }
+
   //outputListの1次元の添え字（行数）がいくつあるかをカウントする変数を用意する。
   let outputListRow = 0;
 
@@ -156,7 +199,7 @@ function displayRecord(outputList){
 
   console.log(outputListColumn);
 
-  if(outputList[0] == null){
+  if(outputListColumn == 0){
 
     return;
 

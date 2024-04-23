@@ -6,7 +6,7 @@
 function updateRecord() {
 
   //本当は社員番号が変更をかけられたときを検知して、このメッセージを出したかったが期間が足りないため省略
-  Browser.msgBox("社員番号の値は更新できません。")
+  Browser.msgBox("社員番号の値は更新できませんのでご了承ください。")
 
   //参照シートに現在表示されているレコードをチェックボックス含めすべて持ってきて格納する。先頭要素がチェックボックスの真偽値なのでカラムは1列増える。
   let sheet3AreaOn_updateRecord = decidingSearchArea(sheet3);
@@ -31,7 +31,7 @@ function updateRecord() {
 
   console.log(updatedRecords);
 
-  //リストシート内のレコード群と更新用レコードのPKの値を比較して、リストシートのPKが同じレコードに更新用レコードを入れる。
+  //リストシート内のレコード群にと更新用レコードのPKの値を比較して、リストシートのPKが同じレコードに更新用レコードを入れる。
   for(i = 0; i < updatedRecords.length; i++){
     for(j = 0; j < sheet2SearchAreaOn_updateRecord.sheetSearchArea.length; j++){
 
@@ -40,7 +40,7 @@ function updateRecord() {
 
       if(sheet2SearchAreaOn_updateRecord.sheetSearchArea[j][0] == updatedRecords[i][0]){
 
-      sheet2SearchAreaOn_updateRecord.sheetSearchArea[i] = updatedRecords[j];
+      sheet2SearchAreaOn_updateRecord.sheetSearchArea[j] = updatedRecords[i];
       
       }
     }
