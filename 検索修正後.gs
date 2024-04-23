@@ -1,8 +1,8 @@
 // @ts-nocheck
 //検索＿担当：中島
-const ss = SpreadsheetApp.getActiveSpreadsheet();
-const sheet2 = ss.getSheetByName("リスト");
-const sheet3 = ss.getSheetByName("参照");
+//const ss = SpreadsheetApp.getActiveSpreadsheet();
+//const sheet2 = ss.getSheetByName("リスト");
+//const sheet3 = ss.getSheetByName("参照");
 
 //自分のスプシで運用するためのコード
 //const sheet2 = ss.getSheetByName("DBシート");
@@ -95,12 +95,15 @@ function inputOnPrompt(text1){
     //全件選択確認ポップアップで押されたボタンに応じて戻り値を変える。OKが押された場合nullを返す。
     switch(response2){
       case "ok":
-        Browser.msgBox("全件表示します。しばらくお待ちください。");
         return null;
       case "cancel":
         Browser.msgBox("検索条件の個数選択からやり直してください。");
         return;
     }
+  }
+  else if(response1.getResponseText().toString().indexOf(" ") >= 0 || response1.getResponseText().toString().indexOf("　") >= 0){
+    Browser.msgBox("検索条件に半角全角スペースを入力することは許可されていません。検索条件の個数選択からやり直してください。");
+    return;
   }
 
   //最初の検索文字列を格納する。
@@ -110,26 +113,26 @@ function inputOnPrompt(text1){
   for(i = 1; i < text1; i++){
 
     //今回のプロンプトを表示する。
-    response1 = ui.prompt("次の検索条件を入力してください。",btn1);
-
-    //114から126まで加筆修正。
-    //2つ目以降の検索文字列で空白が入力された場合、エラーメッセージを出力し、処理を中断する。
-    if(response1.getResponseText() == ""){
-      Browser.msgBox("2つ目以降の検索文字列で空白入力することは許可されていません。検索条件の個数選択からやり直してください。");
-      return;
-    }
+    let response3 = ui.prompt("次の検索条件を入力してください。",btn1);
 
     //今回のプロンプトのボタン押下に応じて処理を変える。キャンセルボタンが押されたら、処理を中断する。
-    switch(response1){
-      case "ok":
+    switch(response3.getSelectedButton()){
+      case ui.Button.OK:
         break;
-      case "cancel":
-        Browser.msgBox("検索条件の個数選択からやり直してください。");
+      case ui.Button.CANCEL:
+        Browser.msgBox("検索を中断します。");
         return;
     }
 
+    //127から132まで加筆修正。
+    //2つ目以降の検索文字列で空白が入力された場合、エラーメッセージを出力し、処理を中断する。
+    if(response3.getResponseText() == "" || response3.getResponseText().toString().indexOf(" ") >= 0 || response3.getResponseText().toString().indexOf("　") >= 0){
+      Browser.msgBox("2つ目以降の検索文字列で空白および、半角全角スペースを入力することは許可されていません。検索条件の個数選択からやり直してください。");
+      return;
+    }
+
     //今回のプロンプトに入力された値を文字列として可変長配列に格納する。
-    inputList[i] = response1.getResponseText();
+    inputList[i] = response3.getResponseText();
   }
 
   //表示用変数に入力値の一覧を入力する。
@@ -140,11 +143,10 @@ function inputOnPrompt(text1){
   }
 
   //入力値の最終チェックを行う。
-  let btnCheckFor_searchValue = Browser.msgBox(inputValues+"検索値は以上でよろしいでしょうか？、数値が検索文字列として入力されている場合は数値は社員番号と見なされるので数値以外の検索文字列は無視されます。",btn1);
+  let btnCheckFor_searchValue = Browser.msgBox(inputValues+"検索値は以上でよろしいでしょうか？数値が検索文字列として入力されている場合は数値は社員番号と見なされるので数値以外の検索文字列は無視されます。",btn1);
 
   switch(btnCheckFor_searchValue){
     case "ok":
-      Browser.msgBox("検索いたします。")
       break;
     case "cancel":
       Browser.msgBox("検索を中断します。")
