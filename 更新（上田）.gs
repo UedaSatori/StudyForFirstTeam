@@ -5,9 +5,6 @@
 /**更新用メソッド*/
 function updateRecord() {
 
-  //本当は社員番号が変更をかけられたときを検知して、このメッセージを出したかったが期間が足りないため省略
-  Browser.msgBox("社員番号の値は更新できませんのでご了承ください。")
-
   //参照シートに現在表示されているレコードをチェックボックス含めすべて持ってきて格納する。先頭要素がチェックボックスの真偽値なのでカラムは1列増える。
   let sheet3AreaOn_updateRecord = decidingSearchArea(sheet3);
 
@@ -73,7 +70,7 @@ function judgeRecord(checkRecords){
   //レコード群の先頭要素に数値以外が入力されたら、社員番号が数値ではないとしてエラーメッセージを出す。
   for(i = 0; i < checkRecords.length; i++){
     if(!isFinite(checkRecords[i][0])){
-      Browser.msgBox("社員番号に数値以外を編集することはできません。");
+      Browser.msgBox("社員番号に数値以外を入力することはできません。");
       return "OUT";
     }
     else if("string" != typeof(checkRecords[i][1])){
