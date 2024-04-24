@@ -13,11 +13,18 @@ function delckline2() {
   const rowNum1 = values2.flatMap((row,i) => row[CKPOS-1]==true? i+1:[]).reverse();
   Logger.log(rowNum1);
 
+  //削除メソッドが押された時に参照シートにレコードがない場合を想定。
+  let resultOfsearchArea = decidingSearchArea(sheet3);
+
+  //先頭レコードがない場合は処理終了。
+  if(resultOfsearchArea == null){
+    return;
+  }
 
   //'参照'でチェックボックスにチェックの入っている行番号がない場合、処理を終了する
   if (rowNum1 == 0){
 
-    Browser.msgBox("削除できる項目がありません");
+    Browser.msgBox("削除する項目にチェックを入れてください");
     return;
   }
   
@@ -36,7 +43,7 @@ function delckline2() {
   }
 
 
-  if (Browser.msgBox("チェックされた項目を削除します",Browser.Buttons.OK_CANCEL) === 'cancel'){
+  if (Browser.msgBox("次の社員情報を削除します： 社員番号 " + checkvalue ,Browser.Buttons.OK_CANCEL) === 'cancel'){
     
     Browser.msgBox("キャンセルしました");
     return;
